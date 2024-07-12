@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   
+</head>
+
+<body>
+  
+        <label for="username">User Name</label>
+        <input type="text" name="username">
+        <br>
+        <label for="password">Password</label>
+        <input type="text">
+        <br>
+        <button onclick="OnPress()">Submit</button>
+        <script>
+            function OnPress() {
+                function localValue(jsonBody) {
+                    console.log(jsonBody);
+                }
+    
+                function callback(result) {
+                    result.json().then(localValue);
+                }
+    
+                fetch('http://localhost:3000/todos', { method: "GET" })
+                    .then(callback)
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                    });
+            }
+        </script>
+</body>
+
+</html>

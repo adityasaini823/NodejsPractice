@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body onload="myFunction()">
+    <label>Title</label>
+    <input type="text" id="title">
+    <br>
+    <label>description</label>
+    <input type="text" id="description">
+    <br>
+    <button onclick="Onpress()" >Submit</button>
+    <div id="new">
+        Old content
+    </div>
+   
+</body>
+<script>
+    
+    function localData(data) {
+        console.log(data);
+    }
+    function callback(response) {
+        response.json().then(localData);
+    }
+    function Onpress() {
+        const title=document.getElementById('title').value
+        const  description=document.getElementById('description').value
+        fetch('http://localhost:3000/todos', {
+            method: 'POST',
+            body: JSON.stringify({
+                title: title,
+                description: description,
+                
+            }),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(callback).catch(error => {
+              console.error('Fetch error:', error);
+          });
+          
+    }
+   
+    function deleteTodo(id,event){
+        event.preventDefault();
+             const parent=document.getElementById('new');
+             const childElements = parent.children;
+             fetch('http://localhost:3000/todos/'+id, {
+                method: 'DELETE',
+                }).then(()=>{
+                    for (let i = 0; i < childElements.length; i++) {
+            const child = childElements[i];
+            if (child.querySelector('button').getAttribute('onclick') === "deleteTodo(" + id + ")") {
+                parent.removeChild(child);
+                break;
+            }
+        }
+        }).catch(error => {
+                    console.error('Fetch error:', error);
+                    });
+                }
+    function displaydata(data){
+        console.log(data);
+         const todos=data;
+         const parent=document.getElementById('new');
+         for(let i=0;i<todos.length;i++){
+            const bigChild=document.createElement('div');
+            const child1=document.createElement('span');
+            child1.innerHTML=todos[i].title;
+            const child2=document.createElement('span');
+            child2.innerHTML=todos[i].description;
+            const child3=document.createElement('button');
+            child3.innerHTML='delete';
+            child3.setAttribute('onclick',"deleteTodo("+todos[i].id +")");
+            bigChild.appendChild(child1);
+            bigChild.appendChild(child2);
+            bigChild.appendChild(child3);
+            parent.appendChild(bigChild);
+         }
+
+
+}
+
+        function myFunction() {  
+            fetch('http://localhost:3000/todos',{
+                method:'GET',
+                headers: { 'Content-Type': 'application/json' }
+            }).then(response=> response.json()).then(displaydata);
+        }
+
+
+
+</script>
+
+</html>
